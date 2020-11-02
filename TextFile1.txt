@@ -1,0 +1,21 @@
+            Document document = revit.Application.ActiveUIDocument.Document;
+            // Find all family symbols whose name is "W10X49"
+            FilteredElementCollector collector = new FilteredElementCollector(document);
+            collector = collector.OfClass(typeof(FamilySymbol));
+
+            // Get Element Id for family symbol which will be used to find family instances
+            var query = from element in collector where element.Name == "Table-Dining" select element;
+            List<Element> famSyms = query.ToList<Element>();
+            ElementId symbolId = famSyms[0].Id;
+
+            // Create a FamilyInstance filter with the FamilySymbol Id
+            FamilyInstanceFilter filter = new FamilyInstanceFilter(document, symbolId);
+
+            // Apply the filter to the elements in the active document
+            collector = new FilteredElementCollector(document);
+            ICollection<Element> familyInstances = collector.WherePasses(filter).ToElements();
+
+            foreach (Element e in familyInstances)
+            {
+                TaskDialog.Show("elements", e.ToString());
+            }
