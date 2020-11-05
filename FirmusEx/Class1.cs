@@ -99,7 +99,6 @@ namespace FirmusEx
 						linkedItersectingElms.Add(intsecEl.Name);
 					}
 				}
-				//git ddd
 				ResultClass resClass = new ResultClass(Int32.Parse(el.Id.ToString()),
 					el.Document.Title, interSectsInLinked.Any(), linkedItersectingElms);
 
