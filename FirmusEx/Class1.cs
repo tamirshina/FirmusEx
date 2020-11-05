@@ -16,15 +16,18 @@ namespace FirmusEx
         public Autodesk.Revit.UI.Result Execute(ExternalCommandData revit,
            ref string message, ElementSet elements)
         {
+
+			//get document
 			UIDocument uiDoc = revit.Application.ActiveUIDocument;
 			Document doc = uiDoc.Document;
 
+			//work with host file 
 			List<Element> tableElments = getAllTablesDataNotLinked(revit);
 
 			List<ResultClass> resultList = new List<ResultClass>();
 			List<string> resultsStrings = new List<string>();
 
-
+			//get relevet face turn to solid and get intersecting elements.
             foreach(Element el in tableElments)
             {
 				List<Solid> geometrySolidsList = getSolidsListOfElement(revit, el);
@@ -44,12 +47,14 @@ namespace FirmusEx
 				List<Element> temIntersectingList = getIntersectingSolidElements(solid, uiDoc, doc);
 				List<string> itersectingElms = new List<string>();
 
+				//if intersecting elements "write them".
 				if (temIntersectingList.Any()) {
 					foreach (Element intsecEl in temIntersectingList)
 					{
 						itersectingElms.Add(intsecEl.Name);
 					}
 				}
+				//create a result class with all properties.
 				ResultClass resClass = new ResultClass(Int32.Parse(el.Id.ToString()),
 					el.Document.Title, itersectingElms.Any(), itersectingElms);
 
@@ -60,8 +65,10 @@ namespace FirmusEx
 			{
 				finalMessage += str + Environment.NewLine;
 			}
+			//show results.
 			TaskDialog.Show("revit", finalMessage + Environment.NewLine + "Done in host model");
 
+			//work with linked doc. 
 			List<Element> linkedTables = getLinkedDocFurniture(doc);
 			List<string> linkedResultsStrings = new List<string>();
 
@@ -72,7 +79,7 @@ namespace FirmusEx
 					return linkedModel.GetTransform();
 				})
 				.FirstOrDefault();
-
+			//get relevet face turn to solid and get intersecting elements.
 			foreach (Element el in linkedTables)
 			{
 				List<Solid> geometrySolidsList = getSolidsListOfElement(revit, el);
